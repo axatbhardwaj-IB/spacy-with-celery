@@ -1,0 +1,18 @@
+FROM python:3.9-slim
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+COPY . /app
+RUN apt update && apt upgrade -y
+RUN apt install sudo -y
+
+# Install any needed packages specified in requirements.txt
+RUN pip install virtualenv
+RUN virtualenv venv
+RUN . venv/bin/activate && pip install -r requirements.txt
+
+# Start Celery worker and execute python executor.py
+# CMD . venv/bin/activate && celery -A celery_tasks worker --loglevel=info & python executor.py
+CMD [".", "venv/bin/activate", "&&", "celery", "-A", "celery_tasks", "worker", "--loglevel=info"]

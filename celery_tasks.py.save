@@ -1,0 +1,9 @@
+#celery_tasks.py
+from celery import Celery
+from spacy_functions import identify_entities
+
+app = Celery('tasks', broker='pyamqp:////')
+
+@app.task
+def analyze_text(text, use_gpu=False):
+    return identify_entities(text, use_gpu)
