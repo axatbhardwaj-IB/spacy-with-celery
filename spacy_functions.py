@@ -1,11 +1,15 @@
-import spacy
+def identify_entities(text, use_gpu=False):
+    import spacy
 
-# Load the Spacy model
-nlp = spacy.load("en_core_web_sm")
+    if use_gpu:
+        try:
+            import cupy
+        except ImportError:
+            raise ValueError("Cannot use GPU, CuPy is not installed. Please install it in your requirements.txt")
 
-def identify_entities(text):
+        spacy.require_gpu()
+        print("Using GPU")
+
+    nlp = spacy.load("en_core_web_trf")
     doc = nlp(text)
-    entities = []
-    for ent in doc.ents:
-        entities.append((ent.text, ent.start_char, ent.end_char, ent.label_))
-    return entities
+    return [(ent.text, ent.label_) for ent in doc.ents]
